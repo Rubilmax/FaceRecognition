@@ -1,2 +1,2 @@
 def yes():
-    return 'no'
+    return 'non'
