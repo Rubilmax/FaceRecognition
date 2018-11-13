@@ -1,0 +1,2 @@
+def yes():
+    return "oui"
