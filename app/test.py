@@ -1,5 +1,4 @@
-import utils_cv
-import open_cv_fab as utils
+import utils_cv as utils
 
 import os.path
 
