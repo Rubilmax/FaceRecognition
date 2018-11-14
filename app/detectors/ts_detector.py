@@ -22,7 +22,6 @@ def process(frame):
 
     net.setInput(blob)
     detections = net.forward()
-    boxes = []
     for i in range(detections.shape[2]):
         confidence = detections[0, 0, i, 2]
         if confidence > conf_threshold:
@@ -30,10 +29,10 @@ def process(frame):
             y1 = int(detections[0, 0, i, 4] * height)
             x2 = int(detections[0, 0, i, 5] * width)
             y2 = int(detections[0, 0, i, 6] * height)
-            boxes.append([x1, y1, x2, y2])
-            cv2.rectangle(out_frame, (x1, y1), (x2, y2), box_color, int(round(height / 150)), 8)
+            cv2.rectangle(out_frame, (x1, y1), (x2, y2), box_color, 2, 8)
+            cv2.rectangle(out_frame, (x1, y1), (int(x1 + 2*(x2-x1)/3), int(y1 + (y2-y1)/10)), box_color, 2, 8)
             cv2.putText(out_frame, str(confidence), (x1,y1), cv2.FONT_HERSHEY_SIMPLEX, .8, (0, 255, 0))
-    return out_frame, boxes
+    return out_frame
 
 def detect():
     """Detects faces present in the video source and save video to file"""
@@ -43,7 +42,7 @@ def detect():
         source = sys.argv[1]
 
     cap = cv2.VideoCapture(source)
-    has_frame, frame = cap.read()
+    #has_frame, frame = cap.read()
 
     #vid_writer = cv2.VideoWriter('video-save-{}.avi'.format(str(source).split(".")[0]), cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 15, (frame.shape[1], frame.shape[0]))
 
@@ -56,11 +55,11 @@ def detect():
         frame_count += 1
 
         t = time.time()
-        out_frame, boxes = process(frame)
+        out_frame = process(frame)
         tt += time.time() - t
         fps = frame_count / tt
-        label = "Face detector  FPS : {:.2f}".format(fps)
-        cv2.putText(out_frame, label, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.4, (0, 0, 255), 3, cv2.LINE_AA)
+        label = "FPS : {:.2f}".format(fps)
+        cv2.putText(out_frame, label, (5, 20), cv2.FONT_HERSHEY_SIMPLEX, .4, (255, 255, 255), 1)
 
         cv2.imshow("Face detection using TensorFlow", out_frame)
 
