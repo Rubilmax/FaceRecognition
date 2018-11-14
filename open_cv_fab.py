@@ -7,5 +7,11 @@ def load_and_display_image(file_name):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def load_and_display_bw(file_name):
+    image=cv2.imread(file_name,0)
+    cv2.imshow('image',image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
 
