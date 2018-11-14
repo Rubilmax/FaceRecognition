@@ -24,7 +24,7 @@ def process(frame):
     detections = net.forward()
     for i in range(detections.shape[2]):
         confidence = detections[0, 0, i, 2]
-        if confidence > conf_threshold:
+        if confidence > conf_threshold:   #Definition of the left-top and right-bottom corners
             x1 = int(detections[0, 0, i, 3] * width)
             y1 = int(detections[0, 0, i, 4] * height)
             x2 = int(detections[0, 0, i, 5] * width)
