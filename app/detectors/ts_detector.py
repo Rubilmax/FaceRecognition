@@ -3,7 +3,7 @@ import cv2
 import time
 import sys
 
-box_color = (0, 255, 0)
+box_color = (255, 255, 255)
 frame_process_size = (300,300)
 conf_threshold = .75
 
@@ -31,7 +31,7 @@ def process(frame):
             y2 = int(detections[0, 0, i, 6] * height)
             cv2.rectangle(out_frame, (x1, y1), (x2, y2), box_color, 2, 8)
             cv2.rectangle(out_frame, (x1, y1), (int(x1 + 3*(x2-x1)/6), int(y1 + (y2-y1)/10)), box_color, -1000, 8)
-            cv2.putText(out_frame, str((confidence//0.0001)/100)+'%', (int(x1+(x2-x1)/20),int(y1 + (y2-y1)/12)), cv2.FONT_HERSHEY_SIMPLEX, (x2-x1)/300., (255, 255, 255),2)
+            cv2.putText(out_frame, str((confidence//0.0001)/100)+'%', (int(x1+(x2-x1)/20),int(y1 + (y2-y1)/12)), cv2.FONT_HERSHEY_SIMPLEX, (x2-x1)/300., (0, 0, 255-((confidence-0.75)/0.75)*255),2)
     return out_frame
 
 def detect():
