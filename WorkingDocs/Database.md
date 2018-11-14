@@ -8,14 +8,13 @@ The second, with more original photos, has the aim to test the ability to recogn
 Then, we create a Database by renaming every picture NameOfTheMember_NumberOfThePicure.
 
 For example :
-'''
 
+'''
 Romain_04
 
 Rémi_12
 
 Fabien_17
-
 '''
 
 
