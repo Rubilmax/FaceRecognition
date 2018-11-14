@@ -30,8 +30,8 @@ def process(frame):
             x2 = int(detections[0, 0, i, 5] * width)
             y2 = int(detections[0, 0, i, 6] * height)
             cv2.rectangle(out_frame, (x1, y1), (x2, y2), box_color, 2, 8)
-            cv2.rectangle(out_frame, (x1, y1), (int(x1 + 2*(x2-x1)/3), int(y1 + (y2-y1)/10)), box_color, 2, 8)
-            cv2.putText(out_frame, str(confidence), (x1,y1), cv2.FONT_HERSHEY_SIMPLEX, .8, (0, 255, 0))
+            cv2.rectangle(out_frame, (x1, y1), (int(x1 + 3*(x2-x1)/6), int(y1 + (y2-y1)/10)), box_color, -1000, 8)
+            cv2.putText(out_frame, str((confidence//0.0001)/100)+'%', (int(x1+(x2-x1)/20),int(y1 + (y2-y1)/12)), cv2.FONT_HERSHEY_SIMPLEX, (x2-x1)/300., (255, 255, 255),2)
     return out_frame
 
 def detect():
