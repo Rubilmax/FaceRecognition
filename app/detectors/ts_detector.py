@@ -5,10 +5,10 @@ import sys
 
 box_color = (0, 255, 0)
 frame_process_size = (300,300)
-conf_threshold = .7
+conf_threshold = .75
 
-modelFile = "opencv_face_detector_uint8.pb"
-configFile = "opencv_face_detector.pbtxt"
+modelFile = "models\\opencv_face_detector_uint8.pb"
+configFile = "models\\opencv_face_detector.pbtxt"
 net = cv2.dnn.readNetFromTensorflow(modelFile, configFile)
 
 def process(frame):
@@ -32,6 +32,7 @@ def process(frame):
             y2 = int(detections[0, 0, i, 6] * height)
             boxes.append([x1, y1, x2, y2])
             cv2.rectangle(out_frame, (x1, y1), (x2, y2), box_color, int(round(height / 150)), 8)
+            cv2.putText(out_frame, str(confidence), (x1,y1), cv2.FONT_HERSHEY_SIMPLEX, .8, (0, 255, 0))
     return out_frame, boxes
 
 def detect():
@@ -44,7 +45,7 @@ def detect():
     cap = cv2.VideoCapture(source)
     has_frame, frame = cap.read()
 
-    vid_writer = cv2.VideoWriter('video-save-{}.avi'.format(str(source).split(".")[0]), cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 15, (frame.shape[1], frame.shape[0]))
+    #vid_writer = cv2.VideoWriter('video-save-{}.avi'.format(str(source).split(".")[0]), cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 15, (frame.shape[1], frame.shape[0]))
 
     frame_count = 0
     tt = 0
@@ -58,12 +59,12 @@ def detect():
         out_frame, boxes = process(frame)
         tt += time.time() - t
         fps = frame_count / tt
-        label = "OpenCV DNN ; FPS : {:.2f}".format(fps)
+        label = "Face detector  FPS : {:.2f}".format(fps)
         cv2.putText(out_frame, label, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.4, (0, 0, 255), 3, cv2.LINE_AA)
 
-        cv2.imshow("Face Detection Comparison", out_frame)
+        cv2.imshow("Face detection using TensorFlow", out_frame)
 
-        vid_writer.write(out_frame)
+        #vid_writer.write(out_frame)
         if frame_count == 1:
             tt = 0
 
@@ -71,4 +72,6 @@ def detect():
         if k == 27:
             break
     cv2.destroyAllWindows()
-    vid_writer.release()
+    #vid_writer.release()
+
+detect()
