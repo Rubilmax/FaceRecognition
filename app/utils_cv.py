@@ -12,3 +12,10 @@ def blur(file):
     """Returns the grayscale edges of the image detected with Canny Edge Detection"""
     img = cv2.imread(file,cv2.IMREAD_GRAYSCALE)
     return cv2.Canny(img,100,200)
+
+def bw(file_name):
+    """Returns the black and white image corresponding to the image"""
+    image = cv2.imread(file_name,0)
+    cv2.imshow('image',image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
