@@ -31,7 +31,7 @@ def serialize_database():
 
     # detect the (x, y)-coordinates of the bounding
     # corresponding to each face in the input image
-    boxes = face_recognition.face_locations(rgb_image, model='cnn')
+    boxes = face_recognition.face_locations(rgb_image, model='hog')
 
     # compute the facial embedding for the face
     encodings = face_recognition.face_encodings(rgb_image, boxes)
@@ -44,7 +44,7 @@ def serialize_database():
 
     print("[INFO] serializing encodings...")
     data = {"encodings": known_encodings, "names": known_names}
-    file = open(database_path + "encodings.pickle", "wb")
+    file = open(database_path + "encodings.pickle", "wb+")
     file.write(pickle.dumps(data))
     file.close()
     print("[INFO] encodings written to %s".format(database_path + "encodings.pickle"))
