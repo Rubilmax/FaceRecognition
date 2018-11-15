@@ -3,8 +3,10 @@ from time import sleep
 
 camera = PiCamera()
 
-camera.start_preview(alpha=200)
-sleep(10)
+
+for i in range(5):
+	sleep(0.5)
+	camera.capture('/home/pi/Desktop/image%s.jpg' % i)
 camera.stop_preview()
 
 #camera.rotation
