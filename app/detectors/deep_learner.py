@@ -1,5 +1,6 @@
 from imutils import paths
 import face_recognition
+import imutils
 import pickle
 import time
 import cv2
@@ -8,8 +9,7 @@ import os
 
 # we won't use ts_detector because face_recognition is built to be better and does the same thing
 database_path = "..\\..\\Data\\database\\train\\"
-process_size_factor = .25
-face_detection_method = 'cnn'
+face_detection_method = 'hog'
 
 def serialize_database():
     # grab the paths to the input images in our dataset
@@ -29,7 +29,10 @@ def serialize_database():
         # load the input image and convert it from RGB (OpenCV ordering)
         # to dlib ordering (RGB) + reduces it to allow it to pass through the cnn
         image = cv2.imread(image_path)
-        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        sm_image = image
+        if face_detection_method == 'cnn':
+            sm_image = imutils.resize(image, height=360)
+        rgb_image = cv2.cvtColor(sm_image, cv2.COLOR_BGR2RGB)
 
         # detect the (x, y)-coordinates of the bounding
         # corresponding to each face in the input image
@@ -55,9 +58,11 @@ def load_database():
     print("[INFO] loading encodings...")
     return pickle.loads(open(database_path + "encodings_" + face_detection_method + ".pickle", "rb").read())
 
-def process(image, database, debug=False):
+def process(image, database, resize=False, debug=False):
     # scale down the image to process it faster
-    sm_image = cv2.resize(image, (int(image.shape[1] * process_size_factor), int(image.shape[0] * process_size_factor)))
+    sm_image = image
+    if resize:
+        imutils.resize(image, height=720)
     rgb_image = cv2.cvtColor(sm_image, cv2.COLOR_BGR2RGB)
 
     # detect the (x, y)-coordinates of the bounding boxes corresponding
@@ -118,9 +123,11 @@ def recognize():
     print("[INFO] started camera...")
 
     cap = cv2.VideoCapture(source)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 352);
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240);
     frame_count = 0
     tt = 0
-    while (1):
+    while True:
         has_frame, frame = cap.read()
         if not has_frame:
             break
