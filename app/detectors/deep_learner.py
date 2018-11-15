@@ -1,12 +1,14 @@
 from imutils import paths
 import face_recognition
 import pickle
+import time
 import cv2
+import sys
 import os
 
 # we won't use ts_detector because face_recognition is built to be better and does the same thing
 database_path = "..\\..\\Data\\database\\train\\"
-process_size_factor = .12
+process_size_factor = .25
 face_detection_method = 'hog'
 
 def serialize_database():
@@ -49,13 +51,11 @@ def serialize_database():
     file.close()
     print("[INFO] encodings written to {}".format(database_path + "encodings.pickle"))
 
-def process(image_path):
-    # load the known faces and embeddings
+def load_database():
     print("[INFO] loading encodings...")
-    data = pickle.loads(open(database_path + "encodings.pickle", "rb").read())
+    return pickle.loads(open(database_path + "encodings.pickle", "rb").read())
 
-    # load the input image and convert it from BGR to RGB
-    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+def process(image, database, debug=False):
     # scale down the image to process it faster
     sm_image = cv2.resize(image, (int(image.shape[1] * process_size_factor), int(image.shape[0] * process_size_factor)))
     rgb_image = cv2.cvtColor(sm_image, cv2.COLOR_BGR2RGB)
@@ -63,7 +63,8 @@ def process(image_path):
     # detect the (x, y)-coordinates of the bounding boxes corresponding
     # to each face in the input image, then compute the facial embeddings
     # for each face
-    print("[INFO] recognizing faces...")
+    if debug:
+        print("[INFO] recognizing faces...")
     boxes = face_recognition.face_locations(rgb_image, model=face_detection_method)
     encodings = face_recognition.face_encodings(rgb_image, boxes)
 
@@ -74,7 +75,7 @@ def process(image_path):
     for encoding in encodings:
         # attempt to match each face in the input image to our known
         # encodings
-        matches = face_recognition.compare_faces(data["encodings"], encoding)
+        matches = face_recognition.compare_faces(database["encodings"], encoding)
         name = "Unknown"
 
         # check to see if we have found a match
@@ -88,7 +89,7 @@ def process(image_path):
             # loop over the matched indexes and maintain a count for
             # each recognized face face
             for i in matchedIdxs:
-                name = data["names"][i]
+                name = database["names"][i]
                 counts[name] = counts.get(name, 0) + 1
 
             # determine the recognized face with the largest number of
@@ -106,10 +107,43 @@ def process(image_path):
         y = top - 15 if top - 15 > 15 else top + 15
         cv2.putText(sm_image, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
-    # show the output image
-    cv2.imshow("Image 2", sm_image)
-    cv2.waitKey(0)
+    return sm_image
+
+def recognize():
+    database = load_database()
+    source = 0
+    if len(sys.argv) > 1:
+        source = sys.argv[1]
+
+    print("[INFO] started camera...")
+
+    cap = cv2.VideoCapture(source)
+    frame_count = 0
+    tt = 0
+    while (1):
+        has_frame, frame = cap.read()
+        if not has_frame:
+            break
+        frame_count += 1
+
+        t = time.time()
+        out_frame = process(frame, database)
+        tt += time.time() - t
+        fps = frame_count / tt
+        label = "FPS : {:.2f}".format(fps)
+        cv2.putText(out_frame, label, (5, 20), cv2.FONT_HERSHEY_SIMPLEX, .4, (255, 255, 255), 1)
+
+        cv2.imshow(face_detection_method + " detection method", out_frame)
+
+        if frame_count == 1:
+            tt = 0
+
+        k = cv2.waitKey(10)
+        if k == 27:
+            break
     cv2.destroyAllWindows()
 
 #database has already been serialized using 'hog' face locations detector
-#serialize_database()
+serialize_database()
+
+#recognize()

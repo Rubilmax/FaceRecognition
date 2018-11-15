@@ -1,6 +1,6 @@
 import utils_cv as utils
 import face_recognition
-import detectors.deep_learner
+import deep_learner as dl
 import cv2
 import time
 import sys
