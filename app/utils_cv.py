@@ -8,6 +8,12 @@ def display(file):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def blob(file, size):
+    img = cv2.imread(file,cv2.IMREAD_UNCHANGED)
+    cv2.imshow('Image',cv2.dnn.blobFromImage(img, 1.0, size, [104, 117, 123], False, False))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 def blur(file):
     """Returns the grayscale edges of the image detected with Canny Edge Detection"""
     img = cv2.imread(file,cv2.IMREAD_GRAYSCALE)
