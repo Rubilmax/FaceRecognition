@@ -9,7 +9,7 @@ import os
 # we won't use ts_detector because face_recognition is built to be better and does the same thing
 database_path = "..\\..\\Data\\database\\train\\"
 process_size_factor = .25
-face_detection_method = 'hog'
+face_detection_method = 'cnn'
 
 def serialize_database():
     # grab the paths to the input images in our dataset
@@ -46,14 +46,14 @@ def serialize_database():
 
     print("[INFO] serializing encodings...")
     data = {"encodings": known_encodings, "names": known_names}
-    file = open(database_path + "encodings.pickle", "wb+")
+    file = open(database_path + "encodings_" + face_detection_method + ".pickle", "wb+")
     file.write(pickle.dumps(data))
     file.close()
-    print("[INFO] encodings written to {}".format(database_path + "encodings.pickle"))
+    print("[INFO] encodings written to {}".format(database_path + "encodings_" + face_detection_method + ".pickle"))
 
 def load_database():
     print("[INFO] loading encodings...")
-    return pickle.loads(open(database_path + "encodings.pickle", "rb").read())
+    return pickle.loads(open(database_path + "encodings_" + face_detection_method + ".pickle", "rb").read())
 
 def process(image, database, debug=False):
     # scale down the image to process it faster
@@ -144,6 +144,6 @@ def recognize():
     cv2.destroyAllWindows()
 
 #database has already been serialized using 'hog' face locations detector
-serialize_database()
+#serialize_database()
 
-#recognize()
+recognize()
