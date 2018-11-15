@@ -9,16 +9,16 @@ import sys
 camera = PiCamera()
 rawCapture = PiRGBArray(camera)
 
+
 ## Raspeberry Pi tests
 
 def camera(seconds):
-    
     frame_count = 0
-    #We acknowledge capturing a 30 fps video
-    while frame_count < seconds*30:
+    # We acknowledge capturing a 30 fps video
+    while frame_count < seconds * 30:
         camera.capture(raw_capture, format="bgr")
-	frame = raw_capture.array
-	
+        frame = raw_capture.array
+
         if not has_frame:
             break
         frame_count += 1
@@ -28,8 +28,8 @@ def camera(seconds):
 
         cv2.imshow("Face detection using TensorFlow", out_frame)
 
-        #interval to let the system process imshow
+        # interval to let the system process imshow
         cv2.waitKey(10)
-        #As we don't have any keyboard, we break after having showed 50 frames
+        # As we don't have any keyboard, we break after having showed 50 frames
     cv2.destroyAllWindows()
-    #vid_writer.release()
+    # vid_writer.release()
