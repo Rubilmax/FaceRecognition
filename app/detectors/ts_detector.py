@@ -74,3 +74,4 @@ def detect():
     #vid_writer.release()
 
 detect()
+
