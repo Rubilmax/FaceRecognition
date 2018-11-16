@@ -108,9 +108,9 @@ def process(image, database, resize=False, debug=False):
     # loop over the recognized faces
     for ((top, right, bottom, left), name) in zip(boxes, names):
         # draw the predicted face name on the image
-        cv2.rectangle(sm_image, (left, top), (right, bottom), (0, 255, 0), 2)
+        cv2.rectangle(sm_image, (left, int((1/2)*top)), (right, int(1.025*bottom)), (0, 255, 0), 2)
         y = top - 15 if top - 15 > 15 else top + 15
-        cv2.putText(sm_image, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
+        cv2.putText(sm_image, name, (left, int((1/2)*top-5)), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)   ##Adapt the dimensions of the rectangle according to tests
 
     return sm_image
 
