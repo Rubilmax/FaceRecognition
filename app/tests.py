@@ -1,9 +1,10 @@
-import utils_cv as utils
+#import utils_cv as utils
 import face_recognition
-import detectors.deep_learner
+#import deep_learner as dl
 import cv2
 import time
 import sys
+import imutils
 
 #import os.path #to test file paths
 
@@ -44,4 +45,4 @@ def camera(seconds):
 
 #utils.blob("..\\Data\\database\\train\\Romain\\test.png", (1000,1333))
 
-dl.process("..\\Data\\database\\test\\remi_1.jpg")
+#dl.process("..\\Data\\database\\test\\remi_1.jpg")
