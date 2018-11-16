@@ -1,5 +1,5 @@
 from imutils import paths
-import face_recognition
+import face_recognition as fr
 import imutils
 import pickle
 import time
@@ -8,8 +8,9 @@ import sys
 import os
 
 # we won't use ts_detector because face_recognition is built to be better and does the same thing
+# post-testing: well it isn't
 database_path = "..\\..\\Data\\database\\train\\"
-face_detection_method = 'hog'
+face_detection_method = 'cnn'
 
 def serialize_database():
     # grab the paths to the input images in our dataset
@@ -30,16 +31,14 @@ def serialize_database():
         # to dlib ordering (RGB) + reduces it to allow it to pass through the cnn
         image = cv2.imread(image_path)
         sm_image = image
-        if face_detection_method == 'cnn':
-            sm_image = imutils.resize(image, height=360)
         rgb_image = cv2.cvtColor(sm_image, cv2.COLOR_BGR2RGB)
 
         # detect the (x, y)-coordinates of the bounding
         # corresponding to each face in the input image
-        boxes = face_recognition.face_locations(rgb_image, model=face_detection_method)
+        boxes = fr.face_locations(rgb_image, model=face_detection_method)
 
         # compute the facial embedding for the face
-        encodings = face_recognition.face_encodings(rgb_image, boxes)
+        encodings = fr.face_encodings(rgb_image, boxes)
 
         # loop over the encodings
         for encoding in encodings:
@@ -70,8 +69,8 @@ def process(image, database, resize=False, debug=False):
     # for each face
     if debug:
         print("[INFO] recognizing faces...")
-    boxes = face_recognition.face_locations(rgb_image, model=face_detection_method)
-    encodings = face_recognition.face_encodings(rgb_image, boxes)
+    boxes = fr.face_locations(rgb_image, model=face_detection_method)
+    encodings = fr.face_encodings(rgb_image, boxes)
 
     # initialize the list of names for each face detected
     names = []
@@ -80,7 +79,7 @@ def process(image, database, resize=False, debug=False):
     for encoding in encodings:
         # attempt to match each face in the input image to our known
         # encodings
-        matches = face_recognition.compare_faces(database["encodings"], encoding)
+        matches = fr.compare_faces(database["encodings"], encoding)
         name = "Unknown"
 
         # check to see if we have found a match
@@ -151,6 +150,6 @@ def recognize():
     cv2.destroyAllWindows()
 
 #database has already been serialized using 'hog' face locations detector
-#serialize_database()
+serialize_database()
 
-recognize()
+#recognize()

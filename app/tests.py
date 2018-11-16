@@ -41,8 +41,16 @@ def camera(seconds):
     cv2.destroyAllWindows()
     #vid_writer.release()
 
+def test_blob(image_path):
+    image = cv2.imread(image_path)
+    print(image.shape)
+    blob = cv2.dnn.blobFromImage(image, 1.0, (360,640), [104, 117, 123], False, False)
+    print(blob.shape)
+
 #camera(5)
 
 #utils.blob("..\\Data\\database\\train\\Romain\\test.png", (1000,1333))
 
 #dl.process("..\\Data\\database\\test\\remi_1.jpg")
+
+#test_blob("..\\Data\\database\\test\\remi_1.jpg")
