@@ -10,8 +10,9 @@ import time
 import sys
 import os
 
-frame_process_size = [(192,108),(256,144),(320,180),(426,240),(640,360),(1280,720)][5]
-conf_threshold = .4
+frame_process_size = [(192,108), (256,144), (320,180), (300,300), (426,240), (640,360), (1280,720)][4]
+face_process_size = [(48,48), (72,72), (96,96)][2]
+conf_threshold = .2
 
 database_path = "..\\..\\Data\\database\\train\\"
 
@@ -44,7 +45,7 @@ def serialize_database():
         image = imutils.resize(image, width=600)
         h, w = image.shape[:2]
 
-        blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0), swapRB=False, crop=False)
+        blob = cv2.dnn.blobFromImage(cv2.resize(image, frame_process_size), 1.0, frame_process_size, (104.0, 177.0, 123.0), swapRB=False, crop=False)
         net.setInput(blob)
         detections = net.forward()
         # ensure at least one face was found
@@ -71,7 +72,7 @@ def serialize_database():
                 if fW < 20 or fH < 20:
                     continue
 
-                faceBlob = cv2.dnn.blobFromImage(face, 1.0 / 255, (96, 96), (0, 0, 0), swapRB=True, crop=False)
+                faceBlob = cv2.dnn.blobFromImage(face, 1.0 / 255, face_process_size, (0, 0, 0), swapRB=True, crop=False)
                 embedder.setInput(faceBlob)
                 vec = embedder.forward()
 
@@ -128,7 +129,7 @@ def process(image, data, debug=False):
     (h, w) = frame.shape[:2]
 
     # construct a blob from the image
-    image_blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0, (300, 300),(104.0, 177.0, 123.0), swapRB=False, crop=False)
+    image_blob = cv2.dnn.blobFromImage(cv2.resize(frame, frame_process_size), 1.0, frame_process_size, (104.0, 177.0, 123.0), swapRB=False, crop=False)
 
     # apply OpenCV's deep learning-based face detector to localize
     # faces in the input image
@@ -158,7 +159,7 @@ def process(image, data, debug=False):
             # construct a blob for the face ROI, then pass the blob
             # through our face embedding model to obtain the 128-d
             # quantification of the face
-            faceBlob = cv2.dnn.blobFromImage(face, 1.0 / 255, (96, 96), (0, 0, 0), swapRB=True, crop=False)
+            faceBlob = cv2.dnn.blobFromImage(face, 1.0 / 255, face_process_size, (0, 0, 0), swapRB=True, crop=False)
             embedder.setInput(faceBlob)
             vec = embedder.forward()
 
@@ -201,7 +202,7 @@ def recognize():
         frame_count += 1
 
         t = time.time()
-        out_frame = process(frame)
+        out_frame = process(frame, data)
         tt += time.time() - t
         fps = frame_count / tt
         label = "FPS : {:.2f}".format(fps)
@@ -221,7 +222,7 @@ def recognize():
 
 #recognize()
 
-#serialize_database()
+serialize_database()
 #train()
 
 recognize()
