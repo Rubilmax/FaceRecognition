@@ -3,29 +3,19 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
-import sys
+import camera_utils as cam_utils
 
 ## Raspeberry Pi tests
 
 def capture_camera():
     # initialize the camera and grab a reference to the raw camera capture
-    cam = PiCamera()
-    cam.resolution = (640, 480)
-    cam.framerate = 32
-    rawCapture = PiRGBArray(cam, size=(640, 480))
-
-    time.sleep(0.1)
+    cam = cam_utils.camera_init()
 
 
     # We acknowledge capturing a 30 fps video
     while True:
         #récupération de l'image fournie par la caméra
-        #puis conversion en array numpy
-        raw_capture = PiRGBArray(cam, size=(640, 480))
-        cam.capture(raw_capture, format="bgr")
-        frame = raw_capture.array
-
-        out_frame = frame.copy()
+        out_frame = cam_utils.camera_get_frame(cam).copy
         cv2.putText(out_frame, "Raspberry camera test", (5, 20), cv2.FONT_HERSHEY_SIMPLEX, .4, (255, 255, 255), 1)
 
         #affichage de l'image
@@ -35,5 +25,5 @@ def capture_camera():
         key = cv2.waitKey(10)
 
 
-
 capture_camera()
+
