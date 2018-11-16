@@ -192,6 +192,9 @@ def recognize():
     print("[INFO] started camera...")
 
     cap = cv2.VideoCapture(source)
+    #has_frame, frame = cap.read()
+
+    #vid_writer = cv2.VideoWriter('video-save-{}.avi'.format(str(source).split(".")[0]), cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 15, (frame.shape[1], frame.shape[0]))
 
     frame_count = 0
     tt = 0
@@ -210,6 +213,7 @@ def recognize():
 
         cv2.imshow("Face detection using TensorFlow", out_frame)
 
+        #vid_writer.write(out_frame)
         if frame_count == 1:
             tt = 0
 
@@ -217,7 +221,10 @@ def recognize():
         if k == 27:
             break
     cv2.destroyAllWindows()
+    #vid_writer.release()
+
+#recognize()
 
 #serialize_database()
 
-#recognize()
+recognize()

@@ -1,24 +1,21 @@
-from imutils import paths
 import face_recognition as fr
-from sklearn.preprocessing import LabelEncoder
-from sklearn.svm import SVC
 import imutils
-import numpy as np
-import pickle
 import cv2
 import time
 import sys
-import os
 
-frame_process_size = [(192,108),(256,144),(320,180),(426,240),(640,360),(1280,720)][3]
+frame_process_size = [(192,108), (256,144), (320,180), (300,300), (426,240), (640,360), (1280,720)][3]
 conf_threshold = .2
 
-database_path = "..\\..\\Data\\database\\train\\"
-
 # load our serialized face detector from disk
-model_file = "models\\opencv_face_detector_uint8.pb"
-config_file = "models\\opencv_face_detector.pbtxt"
-net = cv2.dnn.readNetFromTensorflow(model_file, config_file)
+#model_file = "models\\opencv_face_detector_uint8.pb"
+#config_file = "models\\opencv_face_detector.pbtxt"
+#net = cv2.dnn.readNetFromTensorflow(model_file, config_file)
+
+# this net is more centered
+proto_txt = "models\\deploy.prototxt.txt"
+model_file = "models\\res10_300x300_ssd_iter_140000.caffemodel"
+net = cv2.dnn.readNetFromCaffe(proto_txt, model_file)
 
 def process(frame):
     """returns a copy of @frame where faces or shown"""
@@ -43,7 +40,7 @@ def process(frame):
                 box_color = (0, 0, 255)
             cv2.rectangle(out_frame, (x1, y1), (x2, y2), box_color, 2, 8)
             cv2.rectangle(out_frame, (x1, int(y1 + (y1-y2)/8)), (int(x1 + 2*(x2-x1)/3), y1), box_color, -1, 8)
-            cv2.putText(out_frame, str((confidence//0.0001)/100)+'%', (int(x1 + (x2-x1)/20), int(y1 + (y1-y2)/40)), cv2.FONT_HERSHEY_SIMPLEX, (y2-y1)/300., (255,255,255), 2)
+            cv2.putText(out_frame, str((confidence//0.0001)/100)+'%', (int(x1 + (x2-x1)/20), int(y1 + (y1-y2)/40)), cv2.FONT_HERSHEY_DUPLEX, (y2-y1)/300., (255,255,255), 1)
     return out_frame
 
 def process_fr(frame):
@@ -94,7 +91,7 @@ def detect():
         tt += time.time() - t
         fps = frame_count / tt
         label = "FPS : {:.2f}".format(fps)
-        cv2.putText(out_frame, label, (5, 20), cv2.FONT_HERSHEY_SIMPLEX, .4, (255, 255, 255), 1)
+        cv2.putText(out_frame, label, (5, 20), cv2.FONT_HERSHEY_DUPLEX, .4, (255, 255, 255), 1)
 
         cv2.imshow("Face detection using TensorFlow", out_frame)
 
